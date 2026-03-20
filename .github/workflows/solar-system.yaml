@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: ${{ matrix.nodejs_version }}
 
-      - name: Cache dependencies
+      - name: Cache dependenciess
         uses: actions/cache@v4
         with:
             path: node_modules
