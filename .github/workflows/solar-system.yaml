@@ -90,7 +90,7 @@ jobs:
      runs-on: ubuntu-latest
      steps:
         - name: Checkout Repo
-          uses: actions/checkout@5
+          uses: actions/checkout@v4
 
         - name: Docker Login
           uses: docker/login-action@v4
