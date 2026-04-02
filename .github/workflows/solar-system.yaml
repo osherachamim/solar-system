@@ -157,6 +157,19 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1  
+
+      - name: Set kubeconfig file
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+
       - name: Install Kubectl CLI
         uses: azure/setup-kubectl@v4
         with:
@@ -164,7 +177,7 @@ jobs:
       
       - name: Fetch Kubernetes Cluster Details
         run: |
-          kubectl version --short -o yaml
+          kubectl version -o yaml
           echo ---------------------------------
           kubectl get nodes      
     
