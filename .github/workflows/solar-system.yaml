@@ -221,6 +221,7 @@ jobs:
         id: set-ingress-host-address
         run: |
           echo "APP_INGRESS_HOST=$(kubectl -n ${{ vars.NAMESPACE }} get ingress solar-system -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')" >> $GITHUB_OUTPUT
+          
 
         
         
@@ -236,4 +237,4 @@ jobs:
           run: |
             echo $URL
             echo "----------------------------------------"
-            curl https://$URL/live -s -k | jq -r .status | grep -i live
+            curl http://$URL/live -s -k | jq -r .status | grep -i live
