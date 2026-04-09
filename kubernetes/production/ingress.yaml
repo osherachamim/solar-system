@@ -1,18 +1,17 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
-    kubernetes.io/ingress.class: nginx
   name: solar-system
   namespace: ${NAMESPACE}
 spec:
+  ingressClassName: nginx
   rules:
   - http:
       paths:
-      - backend:
+      - path: /prod
+        pathType: Prefix
+        backend:
           service:
             name: solar-system
             port:
               number: 3000
-        path: /
-        pathType: Prefix
