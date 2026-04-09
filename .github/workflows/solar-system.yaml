@@ -236,7 +236,7 @@ jobs:
       runs-on: ubuntu-latest
 
       steps:
-        - name: Test URL Output using CURL and JQ
+        - name: Test URL Output using CURL and JQq
           env:
             URL: ${{ needs.dev-deploy.outputs.APP_INGRESS_HOST}}
           run: |
