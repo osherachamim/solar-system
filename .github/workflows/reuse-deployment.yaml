@@ -15,6 +15,9 @@ on:
       manifests_path:
         required: true
         type: string
+      mongodb_uri:
+        required: true
+        type: string  
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -93,7 +96,7 @@ jobs:
       - name: Create MongoDB Secret
         run: |
           kubectl -n ${{ env.NAMESPACE }} create secret generic mongo-db-creds \
-            --from-literal=MONGO_URI=${{ env.MONGO_URI }} \
+            --from-literal=MONGO_URI=${{ inputs.mongodb_uri}} \
             --from-literal=MONGO_USERNAME=${{ env.MONGO_USERNAME }} \
             --from-literal=MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }} \
             --save-config \

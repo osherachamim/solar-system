@@ -158,7 +158,8 @@ jobs:
         environment_name: development
         namespace: development
         replicas: "1"
-        manifests_path: kubernetes/development
+        manifests_path: kubernetes/development/
+        mongodb_uri: ${{ vars.MONGO_URI}}
       secrets:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -188,7 +189,8 @@ jobs:
         environment_name: production
         namespace: production
         replicas: "3"
-        manifests_path: kubernetes/production
+        manifests_path: kubernetes/production/
+        mongodb_uri: ${{ vars.MONGO_URI}}
       secrets: inherit
       
   prod-integration-testing:
