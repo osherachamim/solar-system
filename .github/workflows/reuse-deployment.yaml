@@ -18,6 +18,10 @@ on:
       mongodb_uri:
         required: true
         type: string  
+    outputs:
+      APP_INGRESS_HOST:
+        description: "Ingress hostname"
+        value: ${{ jobs.reusable-deploy.outputs.APP_INGRESS_HOST }}   
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
