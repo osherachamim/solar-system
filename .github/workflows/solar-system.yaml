@@ -190,6 +190,7 @@ jobs:
         replicas: "3"
         manifests_path: kubernetes/production
       secrets: inherit
+      
   prod-integration-testing:
       if: github.ref == 'refs/heads/main'
       name: Prod Integration Testing
