@@ -153,7 +153,7 @@ jobs:
      needs: [code-coverage, unit-testing]
      runs-on: ubuntu-latest
      steps:
-        - name: Checkout Repository
+        - name: Checkout Repo
           uses: actions/checkout@v4
 
         - name: Docker Login
@@ -204,7 +204,7 @@ jobs:
         manifests_path: kubernetes/development/
         mongodb_uri: ${{ vars.MONGO_URI}}
       secrets:
-        AWS_ACCESS_KEY_ID: ${{ secrets.0 }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
