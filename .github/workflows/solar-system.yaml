@@ -105,34 +105,39 @@ jobs:
           name: Code-Coverage-Result
           path: test-results.xml
 
+      - name: Archive Code Coverage Result
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Code-Coverage-Result
+          path: cobertura-coverage.xml
+
   reports-s3:
-      needs: [code-coverage, unit-testing]
-      name: AWS S3 - Upload Reports
-      runs-on: ubuntu-latest
-      continue-on-error: true
+    needs: [code-coverage, unit-testing]
+    name: AWS S3 - Upload Reports
+    runs-on: ubuntu-latest
+    continue-on-error: true
 
-      steps:
-        - name: Download Mocha Test Artifact
-          uses: actions/download-artifact@v4
-          with:
-            name: Mocha-Test-Result
+    steps:
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: downloaded-artifacts
 
-        - name: Download Code Coverage Artifact
-          uses: actions/download-artifact@v4
-          with:
-            name: Code-Coverage-Result
+      - name: Merge Test Files
+        run: |
+          ls -ltr
+          find downloaded-artifacts -type f
 
-        - name: Merge Test Files
-          run: |
-            ls -ltr
-            mkdir reports-${{ github.sha }}
-            mv cobertura-coverage.xml reports-${{ github.sha }}/
-            mv test-results.xml reports-${{ github.sha }}/
-            ls -ltr reports-${{ github.sha }}/
+          mkdir reports-${{ github.sha }}
 
-        - name: Upload to AWS S3
-          run: echo "uploading......"
+          find downloaded-artifacts -name "test-results.xml" -exec cp {} reports-${{ github.sha }}/ \;
+          find downloaded-artifacts -name "cobertura-coverage.xml" -exec cp {} reports-${{ github.sha }}/ \;
 
+          ls -ltr reports-${{ github.sha }}/
+
+      - name: Upload to AWS S3
+        run: echo "uploading......"
         
            
   docker:
