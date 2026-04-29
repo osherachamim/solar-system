@@ -153,7 +153,7 @@ jobs:
      needs: [code-coverage, unit-testing]
      runs-on: ubuntu-latest
      steps:
-        - name: Checkout Repo
+        - name: Checkout Repository
           uses: actions/checkout@v4
 
         - name: Docker Login
