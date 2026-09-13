@@ -250,27 +250,23 @@ jobs:
             echo $URL
             echo "----------------------------------------"
             curl http://$URL/live -s -k | jq -r .status | grep -i live
-
+  
   slack-notification:
-  if: always()
-  name: Slack Notification
-  needs:
-    - dev-integration-testing
-    - prod-integration-testing
+    if: always()
+    name: Slack Notification
+    needs:
+      - dev-integration-testing
+      - prod-integration-testing
+    continue-on-error: true
+    runs-on: ubuntu-latest
 
-  continue-on-error: true
-  runs-on: ubuntu-latest
-
-  steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-
-    - name: Slack Notification
-      uses: rtCamp/action-slack-notify@v2
-      env:
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-        SLACK_CHANNEL: github-actions-channel
-        SLACK_COLOR: ${{ job.status }}
-        SLACK_ICON: https://gitlab.com/sidd-harth/solar-system/-/raw/main/images/saturn.png
-        SLACK_MESSAGE: "Triggered by ${{ github.actor }}"
-        SLACK_TITLE: "Information"
+    steps:
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: github-actions-channel
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_ICON: https://gitlab.com/sidd-harth/solar-system/-/raw/main/images/saturn.png
+          SLACK_MESSAGE: "Triggered by ${{ github.actor }}"
+          SLACK_TITLE: "Information"
