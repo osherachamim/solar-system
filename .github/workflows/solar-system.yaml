@@ -210,19 +210,38 @@ jobs:
         MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
       
   dev-integration-testing:
-      if: contains(github.ref, 'feature/')
-      name: Dev Integration Testing
-      needs: dev-deploy
-      runs-on: ubuntu-latest
+    if: contains(github.ref, 'feature/')
+    name: Dev Integration Testing
+    needs: dev-deploy
+    runs-on: ubuntu-latest
 
-      steps:
-        - name: Test URL Output using CURL and JQq
-          env:
-            URL: ${{ needs.dev-deploy.outputs.APP_INGRESS_HOST}}
-          run: |
-            echo $URL
-            echo "----------------------------------------"
-            curl http://$URL/live -s -k | jq -r .status | grep -i live
+    steps:
+      - name: Test URL Output using CURL and JQ
+        env:
+          URL: ${{ needs.dev-deploy.outputs.APP_INGRESS_HOST }}
+        run: |
+          echo "Testing URL: http://$URL/live"
+          echo "----------------------------------------"
+
+          for i in {1..20}; do
+            RESPONSE=$(curl -s -k --max-time 10 http://$URL/live || true)
+
+            echo "Attempt $i"
+            echo "Response: $RESPONSE"
+
+            STATUS=$(echo "$RESPONSE" | jq -r '.status // empty' 2>/dev/null)
+
+            if [ "$STATUS" = "live" ]; then
+              echo "Application is live"
+              exit 0
+            fi
+
+            echo "Application not ready yet. Retrying in 10 seconds..."
+            sleep 10
+          done
+
+          echo "Application did not become ready in time"
+          exit 1
 
   prod-deploy:
       if: github.ref == 'refs/heads/main'
@@ -237,19 +256,38 @@ jobs:
       secrets: inherit
       
   prod-integration-testing:
-      if: github.ref == 'refs/heads/main'
-      name: Prod Integration Testing
-      needs: prod-deploy
-      runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    name: Prod Integration Testing
+    needs: prod-deploy
+    runs-on: ubuntu-latest
 
-      steps:
-        - name: Test URL Output using CURL and JQ
-          env:
-            URL: ${{ needs.prod-deploy.outputs.APP_INGRESS_HOST}}
-          run: |
-            echo $URL
-            echo "----------------------------------------"
-            curl http://$URL/live -s -k | jq -r .status | grep -i live
+    steps:
+      - name: Test URL Output using CURL and JQ
+        env:
+          URL: ${{ needs.prod-deploy.outputs.APP_INGRESS_HOST }}
+        run: |
+          echo "Testing URL: http://$URL/live"
+          echo "----------------------------------------"
+
+          for i in {1..20}; do
+            RESPONSE=$(curl -s -k --max-time 10 http://$URL/live || true)
+
+            echo "Attempt $i"
+            echo "Response: $RESPONSE"
+
+            STATUS=$(echo "$RESPONSE" | jq -r '.status // empty' 2>/dev/null)
+
+            if [ "$STATUS" = "live" ]; then
+              echo "Application is live"
+              exit 0
+            fi
+
+            echo "Application not ready yet. Retrying in 10 seconds..."
+            sleep 10
+          done
+
+          echo "Application did not become ready in time"
+          exit 1
   
   slack-notification:
     if: always()
