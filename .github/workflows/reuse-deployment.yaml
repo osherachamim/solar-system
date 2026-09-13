@@ -111,7 +111,24 @@ jobs:
         run: |
           kubectl apply -f ${{ env.MANIFESTS_PATH }}
 
-      - name: Set App Ingress Host URL
+      - name: Wait for App Ingress Host
         id: set-ingress-host-address
         run: |
-          echo "APP_INGRESS_HOST=$(kubectl -n ${{ env.NAMESPACE }} get ingress solar-system -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')" >> $GITHUB_OUTPUT
+          echo "Waiting for ingress hostname..."
+
+          for i in {1..30}; do
+            APP_INGRESS_HOST=$(kubectl -n ${{ env.NAMESPACE }} get ingress solar-system \
+              -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+
+            if [ -n "$APP_INGRESS_HOST" ]; then
+              echo "Ingress hostname: $APP_INGRESS_HOST"
+              echo "APP_INGRESS_HOST=$APP_INGRESS_HOST" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+
+            echo "Ingress hostname not ready yet..."
+            sleep 10
+          done
+
+          echo "Ingress hostname was not assigned in time"
+          exit 1
