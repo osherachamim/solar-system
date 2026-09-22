@@ -1,0 +1,26 @@
+name: Self Hosted Runner Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-runner:
+    runs-on: [self-hosted, Linux, X64]
+
+    steps:
+      - name: Runner information
+        run: |
+          echo "Hello from my AWS EC2 self-hosted runner!"
+          echo "Hostname: $(hostname)"
+          echo "User: $(whoami)"
+          echo "OS:"
+          cat /etc/os-release
+
+      - name: Check resources
+        run: |
+          echo "CPU:"
+          nproc
+          echo "Memory:"
+          free -h
+          echo "Disk:"
+          df -h /
